@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master
+  labels:
+    app: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+      role: master
+  template:
+    metadata:
+      labels:
+        app: spark
+        role: master
+    spec:
+      containers:
+        - name: spark-apache-master-1
+          image: engo/spark:3.5.5-py312
+          imagePullPolicy: IfNotPresent
+          hostname: spark-apache-master-1
+          command: ["/bin/bash", "-c", "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-apache-master-1 --port 7077 --webui-port 8080"]
+          env:
+            - name: PYSPARK_PYTHON
+              value: "/usr/local/bin/python3.12"
+            - name: PYSPARK_DRIVER_PYTHON
+              value: "/usr/local/bin/python3.12"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+          ports:
+            - containerPort: 8080
+              name: webui
+            - containerPort: 7077
+              name: spark
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-master-service
+  labels:
+    app: spark
+    role: master
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      name: webui
+    - port: 7077
+      targetPort: 7077
+      nodePort: 30077
+      name: spark
+  selector:
+    app: spark
+    role: master
