@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: spark-apache-master-1
-          image: engo/spark:3.5.5-py312
+          image: aksdevweuacr.azurecr.io/engo/spark:3.5.5-py312-amd64
           imagePullPolicy: IfNotPresent
           hostname: spark-apache-master-1
           command: ["/bin/bash", "-c", "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-apache-master-1 --port 7077 --webui-port 8080"]
