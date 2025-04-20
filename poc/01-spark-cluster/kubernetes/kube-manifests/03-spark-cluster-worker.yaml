@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-worker
+  namespace: spark-cluster
+  labels:
+    app: spark
+    role: worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spark
+      role: worker
+  template:
+    metadata:
+      labels:
+        app: spark
+        role: worker
+    spec:
+      nodeSelector:
+        nodepool: sparkpool001
+      containers:
+        - name: spark-worker
+          image: bitnami/spark:3.5.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081  # optional: Spark Worker UI
+              name: webui
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1"
+            limits:
+              memory: "1Gi"
+              cpu: "1"

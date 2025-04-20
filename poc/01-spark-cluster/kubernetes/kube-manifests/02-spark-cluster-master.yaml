@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master
+  namespace: spark-cluster
+  labels:
+    app: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+      role: master
+  template:
+    metadata:
+      labels:
+        app: spark
+        role: master
+    spec:
+      nodeSelector:
+        nodepool: sparkpool001
+      containers:
+        - name: spark-master
+          image: bitnami/spark:3.5.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: webui
+            - containerPort: 7077
+              name: spark
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-master-service
+  namespace: spark-cluster
+  labels:
+    app: spark
+    role: master
+spec:
+  type: LoadBalancer
+  selector:
+    app: spark
+    role: master
+  ports:
+    - name: webui
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+    - name: spark
+      port: 7077
+      targetPort: 7077
+      nodePort: 30077

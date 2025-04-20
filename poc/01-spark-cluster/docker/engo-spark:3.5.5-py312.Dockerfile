@@ -55,7 +55,6 @@ RUN ln -sf /usr/local/bin/python3.12 /usr/local/bin/python3 \
 # Environment variables
 ENV PYSPARK_PYTHON=/usr/local/bin/python3.12
 ENV PYSPARK_DRIVER_PYTHON=/usr/local/bin/python3.12
-ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9.7-src.zip:$PYTHONPATH
 ENV PATH=$PATH:/usr/local/bin
 
 # Change back to the default user
